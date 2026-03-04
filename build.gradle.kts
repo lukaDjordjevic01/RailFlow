@@ -22,6 +22,9 @@ application {
 
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+    if (project.hasProperty("args")) {
+        args = (project.property("args") as String).split(" ")
+    }
 }
 
 tasks.test {

@@ -148,4 +148,5 @@ replay_pid*
 .history
 .ionide
 
+*.dot
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,java,kotlin,visualstudiocode
