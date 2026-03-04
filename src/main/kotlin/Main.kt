@@ -1,5 +1,6 @@
+import java.io.File
 
-fun main() {
+fun main(args: Array<String>) {
     val lines = generateSequence(::readLine).toList()
     var cursor = 0
 
@@ -34,5 +35,12 @@ fun main() {
     for (id in arrivals.keys.sorted()) {
         val cargo = arrivals.getValue(id).sorted()
         println("$id: $cargo")
+    }
+
+    if ("--dot" in args) {
+        val dot = exportDot(graph, arrivals)
+        val outFile = File("output.dot")
+        outFile.writeText(dot)
+        System.err.println("DOT graph written to ${outFile.absolutePath}")
     }
 }
