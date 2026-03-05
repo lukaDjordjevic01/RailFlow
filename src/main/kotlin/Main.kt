@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
         startId = startId,
     )
 
-    val arrivals = Solver.solve(graph)
+    val arrivals = if ("--bfs" in args) BfsSolver.solve(graph) else RpoSolver.solve(graph)
 
     for (id in arrivals.keys.sorted()) {
         val cargo = arrivals.getValue(id).sorted()
