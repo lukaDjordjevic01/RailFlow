@@ -1,37 +1,35 @@
+import java.util.TreeSet
 
-object Solver {
+object RpoSolver {
 
     fun solve(graph: RailwayGraph): Map<Int, Set<Int>> {
+        val (_, rpoNumber) = computeRpo(graph)
+
         val arrivals: Map<Int, MutableSet<Int>> = buildMap {
             for (id in graph.stationIds) put(id, mutableSetOf())
         }
 
-        val worklist = ArrayDeque<Int>()
-        val inWorklist = mutableSetOf<Int>()
+        val worklist = TreeSet<Int>(compareBy<Int> { rpoNumber[it] ?: Int.MAX_VALUE }.thenBy { it })
 
-        worklist.addLast(graph.startId)
-        inWorklist.add(graph.startId)
+        worklist.add(graph.startId)
 
         while (worklist.isNotEmpty()) {
-            val current = worklist.removeFirst()
-            inWorklist.remove(current)
+            val current = worklist.pollFirst()!!
 
             val station = graph.station(current)
             val departure = station.transfer(arrivals.getValue(current))
 
             for (successor in graph.successors(current)) {
+                if (successor !in rpoNumber) continue
+
                 val successorArrivals = arrivals.getValue(successor)
-                // Check if departure contributes anything new (departure ⊄ arrivals).
                 if (!successorArrivals.containsAll(departure)) {
                     successorArrivals.addAll(departure)
-                    if (inWorklist.add(successor)) {
-                        worklist.addLast(successor)
-                    }
+                    worklist.add(successor)
                 }
             }
         }
 
-        // Return an immutable snapshot.
         return arrivals.mapValues { (_, set) -> set.toSet() }
     }
 }
